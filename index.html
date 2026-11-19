@@ -826,6 +826,133 @@ section, footer {
     background: var(--accent-strong);
 }
 
+/* تأكيد الحضور */
+.s-rsvp {
+    background: var(--bg);
+    padding: 55px 15px 40px;
+    text-align: center;
+}
+
+.rsvp-title {
+    font-size: clamp(24px, 6vw, 30px);
+    font-weight: 700;
+    color: var(--accent-strong);
+    margin-bottom: 24px;
+}
+
+.rsvp-card {
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 26px 20px;
+    border: 1px solid rgba(154,95,136,.3);
+    border-radius: 22px;
+    background: rgba(255,255,255,.6);
+    box-shadow: 0 18px 50px rgba(116,64,106,.1);
+    text-align: right;
+}
+
+.rsvp-label {
+    display: block;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--accent-strong);
+    margin: 0 0 8px;
+}
+
+.rsvp-field { margin-bottom: 20px; }
+
+.rsvp-input, .rsvp-select {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid rgba(154,95,136,.4);
+    border-radius: 14px;
+    background: rgba(255,255,255,.8);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
+.rsvp-input::placeholder { color: var(--muted); opacity: .75; }
+
+.rsvp-input:focus-visible, .rsvp-select:focus-visible,
+.rsvp-choice:focus-visible {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 2px;
+}
+
+.rsvp-choices {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.rsvp-choice {
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    background: transparent;
+    color: var(--accent-strong);
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .25s ease, color .25s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.rsvp-choice[aria-pressed="true"] {
+    background: var(--accent);
+    color: #fff;
+}
+
+.rsvp-count[hidden] { display: none; }
+
+.rsvp-error {
+    min-height: 24px;
+    margin: 0 0 10px;
+    color: #a3305f;
+    font-size: 16px;
+    line-height: 1.7;
+    text-align: center;
+}
+
+.rsvp-send {
+    display: flex;
+    width: 100%;
+    margin-top: 0;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.rsvp-textarea {
+    min-height: 110px;
+    line-height: 1.8;
+    resize: vertical;
+}
+
+.rsvp-send[disabled] {
+    opacity: .7;
+    cursor: default;
+}
+
+.rsvp-done { text-align: center; padding: 18px 0; }
+.rsvp-done-icon { font-size: 40px; line-height: 1.4; }
+.rsvp-done-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent-strong);
+    margin: 6px 0;
+}
+.rsvp-done-text {
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.9;
+}
+.rsvp-done[hidden] { display: none; }
+
 /* شاشات الموبايل القصيرة أو العرضية */
 @media (max-height: 520px) {
     .env-top-text { display: none; }
@@ -865,7 +992,7 @@ button, a, #env-screen {
 @media (min-width: 600px) {
     .s-pearl { padding: 75px 22px 45px; }
     .s-welcome, .s-whenwhere { padding: 75px 24px; }
-    .academic-panel, .s-location { padding: 65px 24px; }
+    .academic-panel, .s-location, .s-rsvp { padding: 65px 24px; }
 
     .ww-card-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1055,6 +1182,56 @@ button, a, #env-screen {
            href="https://maps.google.com/maps?q=30.0923355%2C31.3101905&z=17&hl=ar"
            target="_blank" rel="noopener noreferrer"
            aria-label="افتح موقع قاعة المناقشة على خرائط Google">⌖ لوكيشن القاعة</a>
+        </div>
+    </section>
+
+    <section class="s-rsvp" id="rsvp">
+        <div class="rsvp-title reveal">تأكيد الحضور</div>
+
+        <div class="rsvp-card reveal">
+            <div id="rsvpForm">
+                <div class="rsvp-field">
+                    <label class="rsvp-label" for="rsvpName">الاسم</label>
+                    <input class="rsvp-input" id="rsvpName" type="text" autocomplete="name" maxlength="60" placeholder="اكتب اسمك">
+                </div>
+
+                <div class="rsvp-field">
+                    <span class="rsvp-label" id="rsvpChoiceLabel">هل ستحضر؟</span>
+                    <div class="rsvp-choices" role="group" aria-labelledby="rsvpChoiceLabel">
+                        <button type="button" class="rsvp-choice" data-value="yes" aria-pressed="false">سأحضر إن شاء الله</button>
+                        <button type="button" class="rsvp-choice" data-value="no" aria-pressed="false">أعتذر عن الحضور</button>
+                    </div>
+                </div>
+
+                <div class="rsvp-field rsvp-count" id="rsvpCountWrap" hidden>
+                    <label class="rsvp-label" for="rsvpCount">عدد الحضور (شاملًا حضرتك)</label>
+                    <select class="rsvp-select" id="rsvpCount">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
+                </div>
+
+                <div class="rsvp-field">
+                    <label class="rsvp-label" for="rsvpMsg">رسالة تهنئة</label>
+                    <textarea class="rsvp-input rsvp-textarea" id="rsvpMsg" maxlength="500" rows="4" placeholder="أكتب رسالة تهنئة للباحثة لمشاركتها فرحة التفوق"></textarea>
+                </div>
+
+                <p class="rsvp-error" id="rsvpError" role="alert"></p>
+
+                <button type="button" class="location-button rsvp-send" id="rsvpSend">إرسال</button>
+            </div>
+
+            <div class="rsvp-done" id="rsvpDone" role="status" hidden>
+                <div class="rsvp-done-icon" aria-hidden="true">🤍</div>
+                <div class="rsvp-done-title">تم الإرسال بنجاح</div>
+                <div class="rsvp-done-text">جزاكم الله خيرًا، سعدنا بتفاعلكم.</div>
+            </div>
         </div>
     </section>
 
@@ -1327,6 +1504,7 @@ button, a, #env-screen {
     let last = null;
     let rafId = null;
     let resumeTimer = null;
+    let formPaused = false; // أُوقف التمرير بسبب التفاعل مع قسم تأكيد الحضور
 
     function maxScroll() {
         return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
@@ -1363,8 +1541,8 @@ button, a, #env-screen {
         rafId = requestAnimationFrame(step);
     }
 
-    function startAuto() {
-        if (pos >= maxScroll() - 2 && window.scrollY >= maxScroll() - 2) {
+    function startAuto(keepPosition) {
+        if (!keepPosition && pos >= maxScroll() - 2 && window.scrollY >= maxScroll() - 2) {
             window.scrollTo(0, 0);
         }
         pos = window.scrollY;
@@ -1407,8 +1585,23 @@ button, a, #env-screen {
 
     autoBtn.addEventListener('click', e => {
         e.stopPropagation();
+        formPaused = false; // اختيار الضيف اليدوي له الأولوية
         if (auto) stopAuto(); else startAuto();
     });
+
+    /* واجهة يستخدمها قسم تأكيد الحضور: إيقاف التمرير أثناء الكتابة واستئنافه بعد الإرسال */
+    window.__inviteScroll = {
+        pauseForForm() {
+            if (formPaused || !auto) return;
+            formPaused = true;
+            stopAuto();
+        },
+        resumeFromForm() {
+            if (!formPaused) return;
+            formPaused = false;
+            startAuto(true);
+        }
+    };
     autoBtn.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
 
     document.addEventListener('visibilitychange', () => {
@@ -1462,6 +1655,91 @@ button, a, #env-screen {
     revealVisibleSections();
 })();
 </script>
+<script>
+(function () {
+    // رابط Google Apps Script (Web app) الذي يحفظ الردود في Google Sheet.
+    // الصق الرابط المنتهي بـ /exec بين علامتي التنصيص.
+    var SHEET_URL = 'https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbwEUb_EZnOJSaC2xMopVe-dpzKsamUnqKPV-g34rrRWyjLjgZfihE9wZhP_ZMNE4Hv9/exec';
+
+    var nameEl = document.getElementById('rsvpName');
+    var countWrap = document.getElementById('rsvpCountWrap');
+    var countEl = document.getElementById('rsvpCount');
+    var msgEl = document.getElementById('rsvpMsg');
+    var errorEl = document.getElementById('rsvpError');
+    var sendEl = document.getElementById('rsvpSend');
+    var formEl = document.getElementById('rsvpForm');
+    var doneEl = document.getElementById('rsvpDone');
+    var choices = document.querySelectorAll('.rsvp-choice');
+    if (!nameEl || !sendEl) return;
+
+    var answer = '';
+
+    // أول تفاعل مع القسم (لمس أو تركيز على حقل) يوقف التمرير التلقائي
+    var card = document.querySelector('.rsvp-card');
+    function pauseScroll() {
+        if (window.__inviteScroll) window.__inviteScroll.pauseForForm();
+    }
+    if (card) {
+        card.addEventListener('pointerdown', pauseScroll);
+        card.addEventListener('focusin', pauseScroll);
+    }
+
+    choices.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var value = btn.getAttribute('data-value');
+            // الضغط مرة ثانية على نفس الاختيار يلغيه (لأن الحقول اختيارية)
+            answer = (answer === value) ? '' : value;
+            choices.forEach(function (b) {
+                b.setAttribute('aria-pressed', b.getAttribute('data-value') === answer ? 'true' : 'false');
+            });
+            countWrap.hidden = answer !== 'yes';
+            errorEl.textContent = '';
+        });
+    });
+
+    sendEl.addEventListener('click', function () {
+        var name = nameEl.value.trim();
+        var message = msgEl.value.trim();
+
+        if (!name && !answer && !message) {
+            errorEl.textContent = 'اكتب اسمك أو اختر أو اترك رسالة قبل الإرسال.';
+            return;
+        }
+        if (!SHEET_URL) {
+            errorEl.textContent = 'الإرسال غير مفعّل حاليًا، برجاء المحاولة لاحقًا.';
+            return;
+        }
+        errorEl.textContent = '';
+
+        var data = {
+            name: name,
+            attendance: answer === 'yes' ? 'سيحضر' : (answer === 'no' ? 'يعتذر' : ''),
+            count: answer === 'yes' ? countEl.value : '',
+            message: message
+        };
+
+        sendEl.disabled = true;
+        sendEl.textContent = 'جارٍ الإرسال…';
+
+        fetch(SHEET_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(data)
+        }).then(function () {
+            formEl.hidden = true;
+            doneEl.hidden = false;
+            // بعد الإرسال يعود التمرير التلقائي
+            if (window.__inviteScroll) window.__inviteScroll.resumeFromForm();
+        }).catch(function () {
+            errorEl.textContent = 'تعذّر الإرسال، تأكد من الاتصال بالإنترنت وحاول مرة أخرى.';
+            sendEl.disabled = false;
+            sendEl.textContent = 'إرسال';
+        });
+    });
+})();
+</script>
+
 
 </body>
 </html>
